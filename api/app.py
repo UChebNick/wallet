@@ -26,7 +26,6 @@ handler = handlers.handlers()
 
 
 @app.get("/amount/send/")
-@limiter.limit("10/minute")
 async def send_handler(request: Request, to_pub, from_priv, from_pub, amount):
 
     try:
@@ -41,12 +40,14 @@ async def send_handler(request: Request, to_pub, from_priv, from_pub, amount):
 
 
 @app.get("/wallet/create/")
-@limiter.limit("4/second")
 async def create_wallet(request: Request, wallet_type: str):
     try:
         if type(wallet_type) == str:
             j = await handler.create_wallet(wallet_type=wallet_type)
-            return JSONResponse(j, status_code=j['code'])
+            if type(j) == dict:
+                return JSONResponse(j, status_code=j['code'])
+            else:
+                return JSONResponse(j)
         else:
             return JSONResponse({"ok": False, "code": 415, "error": "invalid type"}, status_code=415)
     except:
@@ -62,7 +63,7 @@ async def check_wallet_amount(request: Request, pub, priv):
             return JSONResponse(j, status_code=j['code'])
         else:
             return JSONResponse({"ok": False, "code": 415, "error": "invalid type"}, status_code=415)
-    except :
+    except:
         return JSONResponse({"ok": False, "code": 520}, status_code=520)
 
 
@@ -75,7 +76,7 @@ async def check_transaction(request: Request, priv, pub):
             return JSONResponse(j, status_code=j['code'])
         else:
             return JSONResponse({"ok": False, "code": 415, "error": "invalid type"}, status_code=415)
-    except TabError:
+    except:
         return JSONResponse({"ok": False, "code": 520}, status_code=520)
 
 
@@ -91,8 +92,7 @@ def check_admin(request: Request):
 
 
 
-
 if __name__ == "__main__":
-    uvicorn.run(app, host="172.22.230.194", port=8080)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 

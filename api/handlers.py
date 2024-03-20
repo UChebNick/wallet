@@ -14,8 +14,7 @@ class handlers:
 
         amount = int(amount)
         gaz = math.ceil(amount * loader.gaz_percent)
-        print(int(priv_amount[0][0]))
-        priv_amount = int(priv_amount[0][0])
+        priv_amount = int(priv_amount[0])
         if priv_amount > gaz + amount:
             if amount > 0:
                 async def ret(to_pub: str, from_priv: str, from_pub: str, amount: int, priv_amount: int):
@@ -48,6 +47,8 @@ class handlers:
         return await create(wallet_type)
 
 
+
+
     async def check_amount(self, pub: str, priv: str):
         async def check(pub, priv):
             try:
@@ -57,7 +58,8 @@ class handlers:
 
             except:
                 return {"ok": False, "code": 520}
-            return {"ok": True, "code": 200, "amount": amount[0][0]}
+            return {"ok": True, "code": 200, "amount": amount[0]}
+
         return await check(pub, priv)
 
 
@@ -65,7 +67,6 @@ class handlers:
         async def check():
             try:
                 __list = await self.d.check_transaction(priv, pub)
-                print(__list)
             except:
                 return {"ok": False, "code": 520}
             return {"ok": True, "code": 200, "transaction": __list}

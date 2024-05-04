@@ -68,10 +68,10 @@ async def check_wallet_amount(request: Request, pub, priv):
 
 @app.get("/wallet/transactions/")
 @limiter.limit("10/second")
-async def check_transaction(request: Request, priv, pub):
+async def check_transaction(request: Request, pub_to, pub_from):
     try:
         if type(priv) == str:
-            j = await handler.check_transaction(priv, pub)
+            j = await handler.check_transaction(pub_to, pub_from)
             return JSONResponse(j, status_code=j['code'])
         else:
             return JSONResponse({"ok": False, "code": 415, "error": "invalid type"}, status_code=415)

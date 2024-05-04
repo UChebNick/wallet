@@ -111,14 +111,14 @@ class db:
         cur.close()
         sqlite_connection = sqlite3.connect('history.db')
         cur = sqlite_connection.cursor()
-        cur.execute('INSERT INTO operations_history_table (__to, __from, amount, __time) VALUES (?,?,?,?)', (to_pub, priv, amount, b))
+        cur.execute('INSERT INTO operations_history_table (__to, __from, amount, __time) VALUES (?,?,?,?)', (to_pub, from_pub, amount, b))
         sqlite_connection.commit()
         cur.close()
         return True
 
 
-    async def check_transaction(self, priv, pub):
+    async def check_transaction(self, pub_to, pub_from):
         sqlite_connection = sqlite3.connect('history.db')
         cur = sqlite_connection.cursor()
-        cur.execute('SELECT * FROM operations_history_table WHERE __from = ? OR __to = ?', (priv, pub))
+        cur.execute('SELECT * FROM operations_history_table WHERE __from = ? OR __to = ?', (pub_to, pub_from))
         return cur.fetchall()

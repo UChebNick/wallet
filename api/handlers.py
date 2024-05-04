@@ -61,10 +61,10 @@ class handlers:
         return await check(pub, priv)
 
 
-    async def check_transaction(self, priv: str, pub: str):
+    async def check_transaction(self, pub_to, pub_from):
         async def check():
             try:
-                __list = await self.d.check_transaction(priv, pub)
+                __list = await self.d.check_transaction(pub_to, pub_from)
                 print(__list)
             except:
                 return {"ok": False, "code": 520}

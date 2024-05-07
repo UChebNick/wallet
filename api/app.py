@@ -70,7 +70,7 @@ async def check_wallet_amount(request: Request, pub, priv):
 @limiter.limit("10/second")
 async def check_transaction(request: Request, pub_to, pub_from):
     try:
-        if type(priv) == str:
+        if type(pub_to) == str:
             j = await handler.check_transaction(pub_to, pub_from)
             return JSONResponse(j, status_code=j['code'])
         else:

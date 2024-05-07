@@ -1,23 +1,13 @@
 from fastapi import FastAPI, Depends
-from fastapi_limiter import FastAPILimiter
-from fastapi_limiter.depends import RateLimiter
 import handlers
 from fastapi import FastAPI, Request, Response
-from slowapi.errors import RateLimitExceeded
 from fastapi.responses import FileResponse
 from fastapi.responses import JSONResponse
 
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
-import redis.asyncio as redis
-from contextlib import asynccontextmanager
-import asyncio
-import aioredis
+
 import uvicorn
 
-limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
 handler = handlers.handlers()
 
@@ -26,7 +16,6 @@ handler = handlers.handlers()
 
 
 @app.get("/amount/send/")
-@limiter.limit("10/minute")
 async def send_handler(request: Request, to_pub, from_priv, from_pub, amount):
 
     try:
@@ -41,7 +30,6 @@ async def send_handler(request: Request, to_pub, from_priv, from_pub, amount):
 
 
 @app.get("/wallet/create/")
-@limiter.limit("4/second")
 async def create_wallet(request: Request, wallet_type: str):
     try:
         if type(wallet_type) == str:
@@ -54,7 +42,6 @@ async def create_wallet(request: Request, wallet_type: str):
 
 
 @app.get("/wallet/amount/")
-@limiter.limit("10/second")
 async def check_wallet_amount(request: Request, pub, priv):
     try:
         if type(pub) == str and type(priv):
@@ -67,7 +54,6 @@ async def check_wallet_amount(request: Request, pub, priv):
 
 
 @app.get("/wallet/transactions/")
-@limiter.limit("10/second")
 async def check_transaction(request: Request, pub_to, pub_from):
     try:
         if type(pub_to) == str:
@@ -81,7 +67,6 @@ async def check_transaction(request: Request, pub_to, pub_from):
 
 
 @app.get("/wallet/transactions/admin/check")
-@limiter.limit("10/minute")
 def check_admin(request: Request):
     return FileResponse(path="user.db")
 
